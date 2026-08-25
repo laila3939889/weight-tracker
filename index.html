@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>減肥大作戰</title>
+
+<!-- PWA / Add to Home Screen -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#35312B" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="減肥大作戰" />
+<link rel="icon" href="icon-192.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  :root {
+    --bg:#F3EEE6; --surface:#FBF9F4; --surface-alt:#ECE6D8;
+    --ink:#35312B; --ink-soft:#8F8778; --line:#DDD5C4;
+    --sage:#727E64; --clay:#B98A67; --brick:#A9604C;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; padding:0; background: var(--bg); }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--ink);
+    padding: 28px 18px 60px;
+    background-image: radial-gradient(circle, #00000006 1px, transparent 1px);
+    background-size: 16px 16px;
+    min-height: 100vh;
+    padding-top: max(28px, env(safe-area-inset-top));
+    padding-bottom: max(60px, env(safe-area-inset-bottom));
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: var(--ink-soft); text-transform: uppercase; }
+  h1 { font-family: 'Noto Serif TC', serif; font-weight: 600; font-size: 30px; letter-spacing: 0.06em; margin: 4px 0 18px; cursor: text; border-bottom: 1px dashed transparent; }
+  h1:hover, h1:focus { border-bottom: 1px dashed var(--line); }
+  .ruler { display:flex; align-items:flex-end; gap:6px; width:100%; overflow:hidden; padding: 2px 0; }
+  .tick { width:1px; background:#B0A588; flex-shrink:0; }
+  .tabs { display: flex; gap: 4px; margin: 20px 0 22px; border-bottom: 1px solid var(--line); }
+  .tab-btn { font-family: 'Noto Sans TC', sans-serif; font-size: 13px; letter-spacing: 0.04em; padding: 10px 14px; background: none; border: none; cursor: pointer; color: var(--ink-soft); position: relative; top: 1px; }
+  .tab-btn.active { color: var(--ink); border-bottom: 2px solid var(--sage); font-weight: 500; }
+  .stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 22px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--line); border-radius: 2px; padding: 14px 16px; }
+  .stat-label { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em; margin-bottom: 6px; }
+  .stat-value { font-family: 'IBM Plex Mono', monospace; font-size: 22px; font-weight: 500; }
+  .stat-value.sage { color: var(--sage); }
+  .stat-value.clay { color: var(--clay); }
+  .stat-unit { font-size: 12px; color: var(--ink-soft); margin-left: 3px; }
+  .section-title { font-family: 'Noto Serif TC', serif; font-size: 16px; font-weight: 600; margin: 0 0 10px; letter-spacing: 0.04em; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 2px; padding: 18px; margin-bottom: 18px; }
+  .empty { color: var(--ink-soft); font-size: 13px; padding: 18px 4px; text-align: center; line-height: 1.7; }
+  .form-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+  .field-narrow { flex: 0 0 auto; }
+  .field-narrow input[type="date"], .field-narrow input[type="number"] { width: 160px; min-width: 0; }
+  .field label { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.04em; }
+  .field input, .field select { font-family: 'IBM Plex Mono', monospace; font-size: 14px; border: 1px solid var(--line); background: var(--surface-alt); padding: 8px 10px; border-radius: 2px; color: var(--ink); width: 100%; }
+  .field input:focus, .field select:focus { outline: 2px solid var(--sage); outline-offset: 1px; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { font-family: 'IBM Plex Mono', monospace; font-size: 12px; border: 1px solid var(--line); background: var(--surface-alt); padding: 6px 10px; border-radius: 999px; cursor: pointer; color: var(--ink-soft); }
+  .chip.active { background: var(--sage); color: #fff; border-color: var(--sage); }
+  .submit-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--ink); color: var(--surface); border: none; padding: 9px 16px; border-radius: 2px; font-size: 13px; letter-spacing: 0.03em; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+  .submit-btn:hover { background: #4a4438; }
+  .list { display: flex; flex-direction: column; }
+  .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 2px; border-bottom: 1px solid var(--line); }
+  .list-item:last-child { border-bottom: none; }
+  .li-left { display: flex; align-items: center; gap: 10px; }
+  .li-date { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); min-width: 64px; }
+  .li-main { font-size: 14px; }
+  .li-sub { font-size: 12px; color: var(--ink-soft); }
+  .delta { font-family:'IBM Plex Mono',monospace; font-size:11px; margin-left:8px; }
+  .delta.down { color: var(--sage); }
+  .delta.up { color: var(--brick); }
+  .del-btn { background: none; border: none; color: var(--ink-soft); cursor: pointer; padding: 6px; }
+  .del-btn:hover { color: var(--brick); }
+  .goal-form { display: flex; gap: 8px; align-items: flex-end; }
+  .chart-box { background: var(--surface); border: 1px solid var(--line); border-radius: 2px; padding: 16px 12px 8px; margin-bottom: 18px; }
+  .footer-note { text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-soft); margin-top: 10px; letter-spacing: 0.08em; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+const STORAGE_KEY = "weight-campaign-data-v1";
+const DOSE_OPTIONS = [2.5, 5, 7.5, 10, 12.5, 15];
+const SITE_OPTIONS = ["腹部", "大腿", "上臂"];
+
+function todayStr() {
+  const d = new Date();
+  return d.toISOString().slice(0, 10);
+}
+function fmtDate(dateStr) {
+  const d = new Date(dateStr + "T00:00:00");
+  const days = ["日", "一", "二", "三", "四", "五", "六"];
+  return `${d.getMonth() + 1}/${d.getDate()} (${days[d.getDay()]})`;
+}
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function RulerDivider({ dense }) {
+  const n = dense ? 60 : 40;
+  return (
+    <div className="ruler" aria-hidden="true">
+      {Array.from({ length: n }).map((_, i) => (
+        <span key={i} className="tick" style={{ height: i % 5 === 0 ? 10 : 5, opacity: i % 5 === 0 ? 0.55 : 0.28 }} />
+      ))}
+    </div>
+  );
+}
+
+// Minimal inline icons (no external icon library needed)
+const IconScale = (p) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.color || "#8F8778"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18M4 7h16M4 7l-2 6a4 4 0 0 0 8 0l-2-6M20 7l-2 6a4 4 0 0 0 8 0l-2-6" transform="translate(-2,0) scale(0.85)"/></svg>
+);
+const IconSyringe = (p) => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={p.color || "#B98A67"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 2 4 4M14 6l4 4M2 22l7-7M11 9l4 4M6.5 12.5l5-5 4 4-5 5z"/></svg>
+);
+const IconTrash = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"/></svg>
+);
+const IconPlus = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+);
+
+// Simple SVG line chart (no external chart library needed)
+function WeightChart({ data, goal }) {
+  if (data.length < 2) return null;
+  const W = 600, H = 220, padL = 40, padR = 16, padT = 16, padB = 28;
+  const weights = data.map((d) => d.weight);
+  const min = Math.min(...weights, goal || Infinity) - 1;
+  const max = Math.max(...weights, goal || -Infinity) + 1;
+  const xStep = (W - padL - padR) / (data.length - 1);
+  const yFor = (w) => padT + (H - padT - padB) * (1 - (w - min) / (max - min));
+  const xFor = (i) => padL + i * xStep;
+  const points = data.map((d, i) => `${xFor(i)},${yFor(d.weight)}`).join(" ");
+  const yTicks = 4;
+  const tickVals = Array.from({ length: yTicks + 1 }, (_, i) => min + ((max - min) * i) / yTicks);
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height="220" style={{ display: "block" }}>
+      {tickVals.map((v, i) => (
+        <g key={i}>
+          <line x1={padL} x2={W - padR} y1={yFor(v)} y2={yFor(v)} stroke="#DDD5C4" strokeDasharray="2 4" />
+          <text x={4} y={yFor(v) + 4} fontFamily="IBM Plex Mono" fontSize="10" fill="#8F8778">{v.toFixed(0)}</text>
+        </g>
+      ))}
+      {goal && (
+        <line x1={padL} x2={W - padR} y1={yFor(goal)} y2={yFor(goal)} stroke="#B98A67" strokeDasharray="3 3" strokeWidth="1.5" />
+      )}
+      <polyline points={points} fill="none" stroke="#727E64" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      {data.map((d, i) => (
+        <circle key={i} cx={xFor(i)} cy={yFor(d.weight)} r="3" fill="#727E64" />
+      ))}
+      {data.map((d, i) => {
+        if (data.length > 8 && i % Math.ceil(data.length / 6) !== 0 && i !== data.length - 1) return null;
+        return (
+          <text key={"t" + i} x={xFor(i)} y={H - 8} fontFamily="IBM Plex Mono" fontSize="10" fill="#8F8778" textAnchor="middle">{d.label}</text>
+        );
+      })}
+    </svg>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState("overview");
+  const [profile, setProfile] = useState({ goalWeight: "", title: "" });
+  const [weightLog, setWeightLog] = useState([]);
+  const [injectionLog, setInjectionLog] = useState([]);
+
+  const [wDate, setWDate] = useState(todayStr());
+  const [wValue, setWValue] = useState("");
+  const [wNote, setWNote] = useState("");
+
+  const [iDate, setIDate] = useState(todayStr());
+  const [iDose, setIDose] = useState(DOSE_OPTIONS[0]);
+  const [iSite, setISite] = useState(SITE_OPTIONS[0]);
+  const [iNote, setINote] = useState("");
+
+  const [goalDraft, setGoalDraft] = useState("");
+  const [loaded, setLoaded] = useState(false);
+  const [goalSaved, setGoalSaved] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        setProfile(data.profile || { goalWeight: "", title: "" });
+        setWeightLog(data.weightLog || []);
+        setInjectionLog(data.injectionLog || []);
+        setGoalDraft(data.profile?.goalWeight ? String(data.profile.goalWeight) : "");
+      }
+    } catch (e) {}
+    setLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ profile, weightLog, injectionLog }));
+  }, [profile, weightLog, injectionLog, loaded]);
+
+  const sortedWeights = useMemo(() => [...weightLog].sort((a, b) => a.date.localeCompare(b.date)), [weightLog]);
+  const sortedInjections = useMemo(() => [...injectionLog].sort((a, b) => b.date.localeCompare(a.date)), [injectionLog]);
+
+  const currentWeight = sortedWeights.length ? sortedWeights[sortedWeights.length - 1].weight : null;
+  const startWeight = sortedWeights.length ? sortedWeights[0].weight : null;
+  const totalLoss = currentWeight != null && startWeight != null ? startWeight - currentWeight : null;
+  const goal = profile.goalWeight ? Number(profile.goalWeight) : null;
+  const toGoal = goal != null && currentWeight != null ? currentWeight - goal : null;
+  const weeksInjecting = injectionLog.length;
+
+  const chartData = sortedWeights.map((w) => ({ date: w.date, label: fmtDate(w.date), weight: w.weight }));
+
+  function addWeight(e) {
+    e.preventDefault();
+    if (!wValue || !wDate) return;
+    const entry = { id: uid(), date: wDate, weight: Number(wValue), note: wNote.trim() };
+    setWeightLog((prev) => [...prev.filter((x) => x.date !== wDate), entry]);
+    setWValue(""); setWNote("");
+  }
+  function addInjection(e) {
+    e.preventDefault();
+    if (!iDate) return;
+    const entry = { id: uid(), date: iDate, dose: Number(iDose), site: iSite, note: iNote.trim() };
+    setInjectionLog((prev) => [...prev, entry]);
+    setINote("");
+  }
+  function removeWeight(id) { setWeightLog((prev) => prev.filter((x) => x.id !== id)); }
+  function removeInjection(id) { setInjectionLog((prev) => prev.filter((x) => x.id !== id)); }
+  function saveGoal(e) {
+    e.preventDefault();
+    setProfile((p) => ({ ...p, goalWeight: goalDraft ? Number(goalDraft) : "" }));
+    setGoalSaved(true);
+    setTimeout(() => setGoalSaved(false), 1800);
+  }
+
+  return (
+    <div className="wrap">
+      <h1
+        contentEditable
+        suppressContentEditableWarning
+        onBlur={(e) => {
+          const text = e.currentTarget.textContent.trim();
+          setProfile((p) => ({ ...p, title: text || "減肥大作戰" }));
+        }}
+        style={{ fontFamily: "'Microsoft JhengHei','微軟正黑體','Noto Sans TC',sans-serif", fontWeight: 700, outline: "none" }}
+      >
+        {profile.title || "減肥大作戰"}
+      </h1>
+
+      <div className="tabs">
+        {[{ key: "overview", label: "總覽" }, { key: "weight", label: "體重紀錄" }, { key: "injection", label: "注射紀錄" }].map((t) => (
+          <button key={t.key} className={`tab-btn ${tab === t.key ? "active" : ""}`} onClick={() => setTab(t.key)}>{t.label}</button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+        <>
+          <div className="stat-row">
+            <div className="stat-card">
+              <div className="stat-label">目前體重</div>
+              <div className="stat-value">{currentWeight != null ? currentWeight.toFixed(1) : "—"}<span className="stat-unit">kg</span></div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-label">累計減重</div>
+              <div className={`stat-value ${totalLoss != null && totalLoss > 0 ? "sage" : ""}`}>
+                {totalLoss != null ? (totalLoss >= 0 ? "-" : "+") + Math.abs(totalLoss).toFixed(1) : "—"}<span className="stat-unit">kg</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-label">距離目標</div>
+              {goal == null ? (
+                <div className="stat-value" style={{ fontSize: 13, color: "var(--ink-soft)" }}>尚未設定</div>
+              ) : currentWeight == null ? (
+                <div className="stat-value" style={{ fontSize: 13, color: "var(--ink-soft)" }}>先記錄體重</div>
+              ) : (
+                <div className="stat-value">{toGoal > 0 ? toGoal.toFixed(1) : "已達成"}{toGoal > 0 && <span className="stat-unit">kg</span>}</div>
+              )}
+            </div>
+            <div className="stat-card">
+              <div className="stat-label">已施打次數</div>
+              <div className="stat-value clay">{weeksInjecting}<span className="stat-unit">次</span></div>
+            </div>
+          </div>
+
+          <div className="section-title">體重趨勢</div>
+          <div className="chart-box">
+            {chartData.length >= 2 ? (
+              <WeightChart data={chartData} goal={goal} />
+            ) : (
+              <div className="empty">至少需要兩筆體重紀錄才能顯示趨勢圖<br />先到「體重紀錄」新增第一筆數據</div>
+            )}
+          </div>
+
+          <div className="section-title">目標體重</div>
+          <div className="card">
+            <form className="goal-form" onSubmit={saveGoal}>
+              <div className="field">
+                <label>目標 (kg)</label>
+                <input type="number" step="0.1" inputMode="decimal" value={goalDraft} onChange={(e) => setGoalDraft(e.target.value)} placeholder="例如 58.0" />
+              </div>
+              <button type="submit" className="submit-btn">儲存</button>
+            </form>
+            <div style={{ marginTop: 10, fontSize: 12, fontFamily: "IBM Plex Mono, monospace", color: goalSaved ? "var(--sage)" : "var(--ink-soft)" }}>
+              {goalSaved
+                ? "✓ 已儲存"
+                : goal != null
+                ? `目前設定：${goal.toFixed(1)} kg`
+                : "尚未設定目標"}
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === "weight" && (
+        <>
+          <div className="section-title">新增體重</div>
+          <div className="card">
+            <form onSubmit={addWeight}>
+              <div className="form-row">
+                <div className="field field-narrow"><label>日期</label><input type="date" value={wDate} onChange={(e) => setWDate(e.target.value)} max={todayStr()} /></div>
+              </div>
+              <div className="form-row">
+                <div className="field field-narrow"><label>體重 (kg)</label><input type="number" step="0.1" inputMode="decimal" value={wValue} onChange={(e) => setWValue(e.target.value)} placeholder="例如 62.4" required /></div>
+              </div>
+              <div className="form-row">
+                <div className="field"><label>備註（選填）</label><input type="text" value={wNote} onChange={(e) => setWNote(e.target.value)} placeholder="例如 早晨空腹" /></div>
+              </div>
+              <button type="submit" className="submit-btn"><IconPlus /> 新增紀錄</button>
+            </form>
+          </div>
+
+          <div className="section-title">歷史紀錄</div>
+          <div className="card">
+            {sortedWeights.length === 0 ? (
+              <div className="empty">尚未有體重紀錄<br />新增你的第一筆數據，開始追蹤趨勢</div>
+            ) : (
+              <div className="list">
+                {[...sortedWeights].reverse().map((w, idx, arr) => {
+                  const prev = arr[idx + 1];
+                  const diff = prev ? w.weight - prev.weight : null;
+                  return (
+                    <div className="list-item" key={w.id}>
+                      <div className="li-left">
+                        <IconScale />
+                        <div>
+                          <div className="li-date">{fmtDate(w.date)}</div>
+                          <div className="li-main">
+                            {w.weight.toFixed(1)} kg
+                            {diff != null && <span className={`delta ${diff <= 0 ? "down" : "up"}`}>{diff <= 0 ? "▼" : "▲"} {Math.abs(diff).toFixed(1)}</span>}
+                          </div>
+                          {w.note && <div className="li-sub">{w.note}</div>}
+                        </div>
+                      </div>
+                      <button className="del-btn" onClick={() => removeWeight(w.id)} aria-label="刪除"><IconTrash /></button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {tab === "injection" && (
+        <>
+          <div className="section-title">新增注射紀錄</div>
+          <div className="card">
+            <form onSubmit={addInjection}>
+              <div className="form-row">
+                <div className="field field-narrow"><label>日期</label><input type="date" value={iDate} onChange={(e) => setIDate(e.target.value)} max={todayStr()} /></div>
+              </div>
+              <div className="field" style={{ marginBottom: 10 }}>
+                <label>劑量 (mg)</label>
+                <div className="chips">
+                  {DOSE_OPTIONS.map((d) => (
+                    <button type="button" key={d} className={`chip ${Number(iDose) === d ? "active" : ""}`} onClick={() => setIDose(d)}>{d}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="field" style={{ marginBottom: 10 }}>
+                <label>注射部位</label>
+                <div className="chips">
+                  {SITE_OPTIONS.map((s) => (
+                    <button type="button" key={s} className={`chip ${iSite === s ? "active" : ""}`} onClick={() => setISite(s)}>{s}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="field"><label>備註（選填）</label><input type="text" value={iNote} onChange={(e) => setINote(e.target.value)} placeholder="例如 輕微反胃" /></div>
+              </div>
+              <button type="submit" className="submit-btn"><IconSyringe color="#FBF9F4" /> 新增紀錄</button>
+            </form>
+          </div>
+
+          <div className="section-title">歷史紀錄</div>
+          <div className="card">
+            {sortedInjections.length === 0 ? (
+              <div className="empty">尚未有注射紀錄<br />每週施打後記得回來記錄劑量</div>
+            ) : (
+              <div className="list">
+                {sortedInjections.map((it) => (
+                  <div className="list-item" key={it.id}>
+                    <div className="li-left">
+                      <IconSyringe />
+                      <div>
+                        <div className="li-date">{fmtDate(it.date)}</div>
+                        <div className="li-main">{it.dose} mg · {it.site}</div>
+                        {it.note && <div className="li-sub">{it.note}</div>}
+                      </div>
+                    </div>
+                    <button className="del-btn" onClick={() => removeInjection(it.id)} aria-label="刪除"><IconTrash /></button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      <RulerDivider dense />
+      <div className="footer-note">資料僅儲存於此裝置 · 持續記錄，穩定前進</div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
